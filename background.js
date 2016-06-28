@@ -1,24 +1,21 @@
+var newtabURL = "chrome://newtab/"
+
 chrome.tabs.onCreated.addListener(onTabCreated);
 
 function onTabCreated(tab) {
   if(tab.active) {
     // Wait for our current tab to be updated with a URL.
     chrome.tabs.onUpdated.addListener(function onTabUpdated(id, changeInfo, tab) {
-      // Make sure that our newly created tab has a URL
-      if(id === tab.id && tab.highlighted) {
-        // Only process if URL has changed.
-        if(tab.url == "chrome://newtab/" || !'url' in changeInfo) { return }
+      if(id === tab.id) {
+        // GUARD: Wait for tab URL.
+        if(tab.url == newtabURL || !'url' in changeInfo) { return }
 
         // Remove listener to avoid duplicate events.
         chrome.tabs.onUpdated.removeListener(onTabUpdated);
         console.log("URL: " + tab.url);
 
-        // The current tab will be kept open if
-        // there aren't any duplicate tabs
-        findDuplicateTabs(tab, function(dupTabs) {
-          if(dupTabs.length != 0) {
-            handleDuplicateTabs(tab, dupTabs);
-          }
+        findDuplicateTabs(function(dupTabs) {
+          handleDuplicateTabs(tab, dupTabs);
         });
       }
     })
@@ -27,6 +24,11 @@ function onTabCreated(tab) {
 
 //TODO: Error handling if dup tab could not be highlighted.
 function handleDuplicateTabs(tab, duplicates) {
+
+  // GUARD: The current tab will be kept open if
+  // we can't find duplicate tabs
+  if(duplicates.length == 0) { return }
+
   chrome.tabs.highlight({tabs: duplicates[0].index}, function() {
     // Close our new tab
     chrome.tabs.remove(tab.id)
@@ -47,7 +49,7 @@ function findDuplicateTabs(tab, callback) {
     for(var i = 0; i < windw.tabs.length; i++) {
       var tmpTab = windw.tabs[i];
 
-      // Skip our original tab
+      // GUARD: Skip our original tab
       if(tmpTab.id == tab.id) { continue; }
 
       // Add tab to duplicates if domain is the same.
@@ -66,13 +68,13 @@ function findDuplicateTabs(tab, callback) {
 
 // http://stackoverflow.com/questions/12220345/how-to-compare-two-urls-in-javascript-or-jquery
 function getDomain(url) {
-    var prefix = /^https?:\/\//i;
-    var domain = /^[^\/]+/;
-    url = url.replace(prefix, "");
+  var prefix = /^https?:\/\//i;
+  var domain = /^[^\/]+/;
+  url = url.replace(prefix, "");
 
-    var match = url.match(domain);
-    if (match) {
-			return(match[0]);
-    }
-    return(null);
+  var match = url.match(domain);
+  if (match) {
+    return(match[0]);
+  }
+  return(null);
 }
