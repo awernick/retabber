@@ -2,18 +2,15 @@ chrome.tabs.onCreated.addListener(onTabCreated);
 
 function onTabCreated(tab) {
   if(tab.active) {
-    var tabId = tab.id;
     // Wait for our current tab to be updated with a URL.
     chrome.tabs.onUpdated.addListener(function onTabUpdated(id, changeInfo, tab) {
       // Make sure that our newly created tab has a URL
-      if(id === tabId && tab.url != "chrome://newtab/") {
+      if(id === tab.id && tab.highlighted) {
         // Only process if URL has changed.
-        if(!'url' in changeInfo) { return } 
+        if(tab.url == "chrome://newtab/" || !'url' in changeInfo) { return }
 
         // Remove listener to avoid duplicate events.
         chrome.tabs.onUpdated.removeListener(onTabUpdated);
-
-        console.log("Our tab has been updated");
         console.log("URL: " + tab.url);
 
         // The current tab will be kept open if
@@ -31,10 +28,9 @@ function onTabCreated(tab) {
 //TODO: Error handling if dup tab could not be highlighted.
 function handleDuplicateTabs(tab, duplicates) {
   chrome.tabs.highlight({tabs: duplicates[0].index}, function() {
-    console.log("Tab highlighted");
-
     // Close our new tab
     chrome.tabs.remove(tab.id)
+    console.log("Tab highlighted");
   });
 }
 
@@ -59,7 +55,7 @@ function findDuplicateTabs(tab, callback) {
       // or more specificity (domain + path, etc...)
       tmpDomain = getDomain(tmpTab.url);
       if(tmpDomain == targetDomain) {
-        console.log("Duplicated Tab: " + tmpTab.id);
+        console.log("Duplicate Tab: " + tmpTab.id);
         dups.push(tmpTab);
       }
     }
