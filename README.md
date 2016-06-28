@@ -14,6 +14,7 @@ Hopefully this will help me (and other impulsive tab openers) keep Chrome tabs a
 
 ### TODO
 - [ ] Find duplicate tabs across windows.
+- [ ] Close an existing tab if a URL change creates a duplicate tab.
 - [ ] Add option page to enable/disable features.
 - [ ] Test suite.
 - [ ] Better error handling (non-existent at the moment.)
