@@ -4,9 +4,10 @@ chrome.tabs.onCreated.addListener(onTabCreated);
 
 function onTabCreated(tab) {
   if(tab.active) {
+    var tabId = tab.id
     // Wait for our current tab to be updated with a URL.
     chrome.tabs.onUpdated.addListener(function onTabUpdated(id, changeInfo, tab) {
-      if(id === tab.id) {
+      if(id === tabId) {
         // GUARD: Wait for tab URL.
         if(tab.url == newtabURL || !'url' in changeInfo) { return }
 
@@ -14,7 +15,7 @@ function onTabCreated(tab) {
         chrome.tabs.onUpdated.removeListener(onTabUpdated);
         console.log("URL: " + tab.url);
 
-        findDuplicateTabs(function(dupTabs) {
+        findDuplicateTabs(tab, function(dupTabs) {
           handleDuplicateTabs(tab, dupTabs);
         });
       }
