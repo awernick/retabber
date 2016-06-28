@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title> Retabber </title>
+  </head>
+  <body>
+    <label> Search for duplicate tabs across: </label>
+    <select>
+      <option value="active"> Active Window </option>
+      <option value="all"> All Windows </option>
+    </select>
+
+    <input type="checkbox"> Close new duplicate tabs </input> 
+    <input type="checkbox"> Close existing duplicate tabs when the URL is changed</input> 
+
+
+    <label> Whitelist </label>
+    <p class="help-block">
+      Add the URL of each page you want retabber to ignore in a new line. For example:
+
+      https://facebook.com/
+      https://mail.google.com/
+
+      You can also specify part of the url to whitelist multiple sites by domain:
+
+      facebook.com
+    </p> 
+    <textarea id="whitelist">
+    </textarea>
+
+    <hr />
+
+    <button id="cancel"> Cancel </button>
+    <button id="save"> Save </button>
+
+  </body>
+</html>
