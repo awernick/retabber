@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Retabber",
+  "description": "Minimizes duplicate tabs",
+  "version": "0.1.0",
+  "browser_action": {
+    "default_action": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
