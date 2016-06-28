@@ -1,0 +1,22 @@
+.container {
+  padding: 10px 15px; }
+
+.sidebar {
+  width: 20%;
+  height: 100%;
+  float: left; }
+
+.content {
+  width: 80%;
+  float: left; }
+
+.input {
+  display: block;
+  padding: 15px; }
+  .input label {
+    display: inline-block; }
+  .input--select label {
+    display: block; }
+
+.help-block {
+  text-wrap: pre; }

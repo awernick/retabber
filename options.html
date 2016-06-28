@@ -1,36 +1,52 @@
 <html>
   <head>
     <title> Retabber </title>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <label> Search for duplicate tabs across: </label>
-    <select>
-      <option value="active"> Active Window </option>
-      <option value="all"> All Windows </option>
-    </select>
+    <div class="container">
+      <div class="sidebar">
+      </div>
 
-    <input type="checkbox"> Close new duplicate tabs </input> 
-    <input type="checkbox"> Close existing duplicate tabs when the URL is changed</input> 
+      <div id="page1" class="content">
+
+        <div class="input--select">
+          <label> Search for duplicate tabs across: </label>
+          <select>
+            <option value="active"> Active Window </option>
+            <option value="all"> All Windows </option>
+          </select>
+        </div>
+
+        <div class="input checkboxes">
+          <input type="checkbox"> Close new duplicate tabs </input> 
+          <input type="checkbox"> Close existing duplicate tabs when the URL is changed</input> 
+        </div>
 
 
-    <label> Whitelist </label>
-    <p class="help-block">
-      Add the URL of each page you want retabber to ignore in a new line. For example:
+        <div class="input textarea">
+          <label> Whitelist </label>
+          <p class="help-block">
+            Add the URL of each page you want retabber to ignore in a new line. For example:
 
-      https://facebook.com/
-      https://mail.google.com/
+            https://facebook.com/
+            https://mail.google.com/
 
-      You can also specify part of the url to whitelist multiple sites by domain:
+            You can also specify part of the url to whitelist multiple sites by domain:
 
-      facebook.com
-    </p> 
-    <textarea id="whitelist">
-    </textarea>
+            facebook.com
+          </p> 
+          <textarea id="whitelist">
+          </textarea>
+        </div>
 
-    <hr />
-
-    <button id="cancel"> Cancel </button>
-    <button id="save"> Save </button>
+        <hr />
+        <div class="input buttons">
+          <button id="cancel"> Cancel </button>
+          <button id="save"> Save </button>
+        </div>
+      </div>
+    </div>
 
   </body>
 </html>
