@@ -1,8 +1,18 @@
 document.addEventListener("DOMContentLoaded", function() {
   restoreOptions();
 
+  // Save Action
   var save = document.getElementById("save");
   save.addEventListener("click", saveOptions);
+
+  // Cancel Action
+  var cancel = document.getElementById("cancel");
+  cancel.addEventListener("click", function(){
+    // Close option tab without persisting
+    chrome.tabs.getCurrent(function(tab) {
+      chrome.tabs.remove(tab.id)
+    })
+  });
 })
 
 function saveOptions() {
