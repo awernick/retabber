@@ -10,8 +10,8 @@
 
       <div id="page1" class="content">
 
-        <div class="input--select">
-          <label> Search for duplicate tabs across: </label>
+        <div class="input select">
+          <label> Search for duplicate tabs in: </label>
           <select>
             <option value="active"> Active Window </option>
             <option value="all"> All Windows </option>
@@ -19,14 +19,18 @@
         </div>
 
         <div class="input checkboxes">
-          <input type="checkbox"> Close new duplicate tabs </input> 
-          <input type="checkbox"> Close existing duplicate tabs when the URL is changed</input> 
+          <label class="checkbox"> 
+            <input type="checkbox"/> Close new duplicate tabs 
+          </label>
+          <label class="checkbox"> 
+            <input type="checkbox"/> Close existing duplicate tabs when the URL is changed 
+          </label> 
         </div>
 
 
         <div class="input textarea">
           <label> Whitelist </label>
-          <p class="help-block">
+          <p class="help-block"> 
             Add the URL of each page you want retabber to ignore in a new line. For example:
 
             https://facebook.com/
@@ -34,13 +38,10 @@
 
             You can also specify part of the url to whitelist multiple sites by domain:
 
-            facebook.com
-          </p> 
-          <textarea id="whitelist">
-          </textarea>
+            facebook.com </p> 
+          <textarea id="whitelist"></textarea>
         </div>
 
-        <hr />
         <div class="input buttons">
           <button id="cancel"> Cancel </button>
           <button id="save"> Save </button>
