@@ -5,14 +5,11 @@
   </head>
   <body>
     <div class="container">
-      <div class="sidebar">
-      </div>
-
-      <div id="page1" class="content">
-
+      <div class="content">
+        <h1> Retabber </h1>
         <div class="input select">
           <label> Search for duplicate tabs in: </label>
-          <select>
+          <select id="search-scope">
             <option value="active"> Active Window </option>
             <option value="all"> All Windows </option>
           </select>
@@ -20,10 +17,10 @@
 
         <div class="input checkboxes">
           <label class="checkbox"> 
-            <input type="checkbox"/> Close new duplicate tabs 
+            <input id="close-new" type="checkbox"/> Close new duplicate tabs 
           </label>
           <label class="checkbox"> 
-            <input type="checkbox"/> Close existing duplicate tabs when the URL is changed 
+            <input id="close-existing" type="checkbox"/> Close existing duplicate tabs when the URL is changed 
           </label> 
         </div>
 
@@ -45,9 +42,10 @@
         <div class="input buttons">
           <button id="cancel"> Cancel </button>
           <button id="save"> Save </button>
+          <div id="status"></status>
         </div>
       </div>
     </div>
-
+    <script src="options.js"></script>
   </body>
 </html>

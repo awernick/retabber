@@ -1,19 +1,20 @@
 .container {
+  width: 600px;
   padding: 10px 15px;
-}
-.sidebar {
-  width: 30%;
-  height: 100%;
-  float: left;
+  margin: 0px auto;
 }
 .content {
-  width: 70%;
-  float: left;
+  margin: 0px 15px;
 }
-
+#status {
+  margin: 10px 0px;
+  color: #666;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: Helvetica;
+}
 .input {
   display: block;
-  margin: 0px 15px;
   padding: 10px 0px;
   &.checkboxes {
     padding-top: 5px;
@@ -46,16 +47,19 @@
 
   textarea {
     width: 100%;
+    max-width: 600px;
     height: 100px;
     border: 1px #cFcFcF solid;
   }
 
   select {
     font-size: 13px;
+    font-weight: 300;
     font-family: Helvetica;
     padding: 7px 30px 7px 10px;
     background-color: white;
     border-radius: 0px;
+    border-color: #cfcfcf;
     -webkit-appearance: none;
   }
 }
