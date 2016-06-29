@@ -1,0 +1,24 @@
+{
+  "name": "retabber",
+  "version": "0.1.2",
+  "description": "### What is it? A simple Chrome extension that closes unnecessary new tabs if there are others with the same page already loded.",
+  "main": "background.js",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2",
+    "gulp-util": "^3.0.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awernick/retabber.git"
+  },
+  "author": "Alan Wernick",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awernick/retabber/issues"
+  },
+  "homepage": "https://github.com/awernick/retabber#readme"
+}
