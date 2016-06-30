@@ -1,5 +1,7 @@
 (function() {
 
+  window.retabber = window.retabber || {};
+
   var newtabURL = "chrome://newtab/";
   var prefStore = new retabber.PrefStore;
 
@@ -18,6 +20,7 @@
 
   function main() {
     prefStore.getAll(setPreferences);
+    prefStore.addListener(setPreferences);
 
     chrome.tabs.onCreated.addListener(onTabCreated);
   }
