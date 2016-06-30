@@ -11,6 +11,16 @@ function getDomain(url) {
   return(null);
 }
 
+function getProtocol(url) {
+  var protocol = /^[^:]+/;
+  var match = url.match(protocol);
+  if(match) {
+    return match[0];
+  } else {
+    return null;
+  }
+}
+
 // http://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
 function isFunction(functionToCheck) {
   var getType = {};
