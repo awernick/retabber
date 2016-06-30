@@ -1,6 +1,6 @@
 {
   "name": "retabber",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "### What is it? A simple Chrome extension that closes unnecessary new tabs if there are others with the same page already loded.",
   "main": "background.js",
   "devDependencies": {
