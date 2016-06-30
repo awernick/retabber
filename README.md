@@ -19,7 +19,7 @@ Hopefully this will help me (and other impulsive tab openers) keep Chrome tabs a
 - [ ] Test suite.
 - [ ] Better error handling (non-existent at the moment).
 - [ ] Whitelist.
-- [ ] Ignore chrome-related tabs. E.g. chrome://extensions.
+- [x] ~~Ignore chrome-related tabs. E.g. chrome://extensions.~~
 - [ ] Per-domain settings.
 - [ ] Allows user to specify how to match duplicate tabs. Ex. by url, title, domain, etc...
 
