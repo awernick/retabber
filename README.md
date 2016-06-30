@@ -13,11 +13,14 @@ This leads me to have 20+ tabs that I don't use and just eat up my computer's re
 Hopefully this will help me (and other impulsive tab openers) keep Chrome tabs at a minimum.
 
 ### TODO
-- [ ] Find duplicate tabs across windows.
+- [x] ~~Find duplicate tabs across windows.~~
 - [ ] Close an existing tab if a URL change creates a duplicate tab.
-- [x] Add option page to enable/disable features.
+- [x] ~~Add option page to enable/disable features.~~
 - [ ] Test suite.
-- [ ] Better error handling (non-existent at the moment.)
+- [ ] Better error handling (non-existent at the moment).
+- [ ] Whitelist.
+- [ ] Ignore chrome-related tabs. E.g. chrome://extensions.
+- [ ] Per-domain settings.
 - [ ] Allows user to specify how to match duplicate tabs. Ex. by url, title, domain, etc...
 
 ### Contribute
