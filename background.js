@@ -37,6 +37,9 @@
             // Remove listener to avoid duplicate events.
             chrome.tabs.onUpdated.removeListener(onTabUpdated);
             console.log("URL: " + tab.url);
+            
+            // Filter whitelist
+            if(inWhitelist(tab.url)) { return }
 
             findDuplicateTabs(tab, function(dupTabs) {
               handleDuplicateTabs(tab, dupTabs);
@@ -114,6 +117,17 @@
 
       callback(dups);
     })
+  }
+
+  function inWhitelist(url) {
+    var protocol = getProtocol(url);
+
+    if(protocol == "chrome" ||
+       protocol == "chrome-extension") {
+      return true;
+    }
+
+    return false;
   }
 
   main();
