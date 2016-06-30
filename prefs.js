@@ -3,6 +3,7 @@
   window.retabber = window.retabber || {};
 
   retabber.PrefStore = function() {
+    this.listeners_ = []
     this.defaults_ = {
       prefs: {
         searchScope: 'active',
@@ -11,6 +12,8 @@
         whitelist: ''
       }
     };
+
+    chrome.storage.onChanged.addListener(this.notifyListeners.bind(this));
   };
 
   retabber.PrefStore.prototype = {
@@ -37,6 +40,18 @@
           }
         }
       );
+    },
+
+    addListener: function(callback) {
+      if(isFunction(callback)) {
+        this.listeners_.push(callback);
+      }
+    },
+
+    notifyListeners: function(changes, namespace) {
+      for(var i = 0; i < this.listeners_.length; i++) {
+        this.listeners_[i](changes.prefs.newValue);
+      }
     },
 
     getAll: function(callback) {
