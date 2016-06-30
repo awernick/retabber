@@ -1,6 +1,19 @@
 (function() {
 
   var newtabURL = "chrome://newtab/";
+  var prefStore = new retabber.PrefStore;
+
+  var searchScope   = null,
+      closeNew      = null,
+      closeExisting = null,
+      whitelist     = null;
+
+  prefStore.getAll(function(prefs) {
+    searchScope   = prefs.searchScope;
+    closeNew      = prefs.closeNew;
+    closeExisting = prefs.closeExisting;
+    whitelist     = prefs.whitelist;
+  })
 
   function main() {
     chrome.tabs.onCreated.addListener(onTabCreated);
@@ -34,36 +47,62 @@
     // we can't find duplicate tabs
     if(duplicates.length == 0) { return }
 
-    chrome.tabs.highlight({tabs: duplicates[0].index}, function() {
+    var dupWindow = duplicates[0].window;
+    var dupTab    = duplicates[0].tab;
+
+    chrome.tabs.highlight({
+      windowId: dupWindow.id,
+      tabs: dupTab.index
+    }, function() {
       // Close our new tab
       chrome.tabs.remove(tab.id)
         console.log("Tab highlighted");
     });
+
+    // Request focus of different window
+    if(dupWindow.id != tab.windowId) {
+      chrome.windows.update(dupWindow.id, { focused: true })
+    }
   }
 
   // Finds tabs with similar urls across windows.
-  // TODO: Add toggle option to limit closing of duplicate tabs
-  // across windows, or only to the current one. 
   function findDuplicateTabs(tab, callback) {
-    chrome.windows.getCurrent({populate: true, windowTypes: ['normal']}, function(windw) {
+
+    if(searchScope == "active") {
+      var func = chrome.windows.getCurrent;
+    } else if (searchScope == "all") {
+      var func = chrome.windows.getAll;
+    }
+
+    func({populate: true, windowTypes: ['normal']}, function(windows) {
       var dups = [];
       var targetDomain = getDomain(tab.url);
       console.log("Original Tab: " + tab.id);
 
+      // Convert single Window into Window array
+      if(!(windows instanceof Array)) {
+        windows = [windows];
+      } 
+
       // TODO: Assert window still contains our tab
-      for(var i = 0; i < windw.tabs.length; i++) {
-        var tmpTab = windw.tabs[i];
+      for(var i = 0; i < windows.length; i++) {
+        for(var j = 0; j < windows[i].tabs.length; j++) {
+          var tmpTab = windows[i].tabs[j];
 
-        // GUARD: Skip our original tab
-        if(tmpTab.id == tab.id) { continue; }
+          // GUARD: Skip our original tab
+          if(tmpTab.id == tab.id) { continue; }
 
-        // Add tab to duplicates if domain is the same.
-        // TODO: Give the user an option to match by domain
-        // or more specificity (domain + path, etc...)
-        tmpDomain = getDomain(tmpTab.url);
-        if(tmpDomain == targetDomain) {
-          console.log("Duplicate Tab: " + tmpTab.id);
-          dups.push(tmpTab);
+          // Add tab to duplicates if domain is the same.
+          // TODO: Give the user an option to match by domain
+          // or more specificity (domain + path, etc...)
+          tmpDomain = getDomain(tmpTab.url);
+          if(tmpDomain == targetDomain) {
+            console.log("Duplicate Tab: " + tmpTab.id);
+            dups.push({
+              tab: tmpTab,
+              window: windows[i]
+            });
+          }
         }
       }
 
