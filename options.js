@@ -1,4 +1,8 @@
 (function() {
+  window.retabber = window.retabber || {}
+
+  var prefStore = new retabber.PrefStore;
+
   function main() {
     document.addEventListener("DOMContentLoaded", function() {
       restoreOptions();
@@ -25,19 +29,17 @@
         whitelist     = document.getElementById("whitelist").value;
     var status        = document.getElementById("status");
 
-    chrome.storage.sync.set({
+    prefStore.setAll({
       searchScope: searchScope,
       closeNew: closeNew,
       closeExisting: closeExisting,
       whitelist: whitelist
-    }, function() {
-      status.textContent = "Your options have been saved!";
-
-      setTimeout(function() {
-        status.textContent = "";
-      }, 2000);
-
     })
+
+    status.textContent = "Your options have been saved!";
+    setTimeout(function() {
+      status.textContent = "";
+    }, 2000);
   }
 
   function restoreOptions() {
@@ -46,12 +48,7 @@
         closeExisting = document.getElementById("close-existing"), 
         whitelist     = document.getElementById("whitelist");
 
-    chrome.storage.sync.get({
-      searchScope: 'active',
-      closeNew: 'true',
-      closeExisting: 'false',
-      whitelist: ''
-    }, function(items) {
+    prefStore.getAll(function(items) {
       searchScope.value = items.searchScope;
       closeNew.checked = items.closeNew;
       closeExisting.checked = items.closeExisting;
