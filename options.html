@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title> Retabber </title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1> Retabber </h1>
+        <div class="input select">
+          <label> Search for duplicate tabs in: </label>
+          <select id="search-scope">
+            <option value="active"> Active Window </option>
+            <option value="all"> All Windows </option>
+          </select>
+        </div>
+
+        <div class="input checkboxes">
+          <label class="checkbox"> 
+            <input id="close-new" type="checkbox"/> Close new duplicate tabs 
+          </label>
+          <label class="checkbox"> 
+            <input id="close-existing" type="checkbox"/> Close existing duplicate tabs when the URL is changed 
+          </label> 
+        </div>
+
+
+        <div class="input textarea">
+          <label> Whitelist </label>
+          <p class="help-block"> 
+            Add the URL of each page you want retabber to ignore in a new line. For example:
+
+            https://facebook.com/
+            https://mail.google.com/
+
+            You can also specify part of the url to whitelist multiple sites by domain:
+
+            facebook.com </p> 
+          <textarea id="whitelist"></textarea>
+        </div>
+
+        <div class="input buttons">
+          <button id="cancel"> Cancel </button>
+          <button id="save"> Save </button>
+          <div id="status"></status>
+        </div>
+      </div>
+    </div>
+    <script src="prefs.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

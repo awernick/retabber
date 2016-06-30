@@ -1,81 +1,134 @@
-var newtabURL = "chrome://newtab/"
+(function() {
 
-chrome.tabs.onCreated.addListener(onTabCreated);
+  window.retabber = window.retabber || {};
 
-function onTabCreated(tab) {
-  if(tab.active) {
-    var tabId = tab.id
-    // Wait for our current tab to be updated with a URL.
-    chrome.tabs.onUpdated.addListener(function onTabUpdated(id, changeInfo, tab) {
-      if(id === tabId) {
-        // GUARD: Wait for tab URL.
-        if(tab.url == newtabURL || !'url' in changeInfo) { return }
+  var newtabURL = "chrome://newtab/";
+  var prefStore = new retabber.PrefStore;
 
-        // Remove listener to avoid duplicate events.
-        chrome.tabs.onUpdated.removeListener(onTabUpdated);
-        console.log("URL: " + tab.url);
+  var searchScope   = null,
+      closeNew      = null,
+      closeExisting = null,
+      whitelist     = null;
 
-        findDuplicateTabs(tab, function(dupTabs) {
-          handleDuplicateTabs(tab, dupTabs);
-        });
-      }
-    })
+
+  function setPreferences(prefs) {
+    searchScope   = prefs.searchScope;
+    closeNew      = prefs.closeNew;
+    closeExisting = prefs.closeExisting;
+    whitelist     = prefs.whitelist;
   }
-}
 
-//TODO: Error handling if dup tab could not be highlighted.
-function handleDuplicateTabs(tab, duplicates) {
+  function main() {
+    prefStore.getAll(setPreferences);
+    prefStore.addListener(setPreferences);
 
-  // GUARD: The current tab will be kept open if
-  // we can't find duplicate tabs
-  if(duplicates.length == 0) { return }
+    chrome.tabs.onCreated.addListener(onTabCreated);
+  }
 
-  chrome.tabs.highlight({tabs: duplicates[0].index}, function() {
-    // Close our new tab
-    chrome.tabs.remove(tab.id)
-    console.log("Tab highlighted");
-  });
-}
+  function onTabCreated(tab) {
+    if(tab.active) {
+      var tabId = tab.id
+        // Wait for our current tab to be updated with a URL.
+        chrome.tabs.onUpdated.addListener(function onTabUpdated(id, changeInfo, tab) {
+          if(id === tabId) {
+            // GUARD: Wait for tab URL.
+            if(tab.url == newtabURL || !'url' in changeInfo) { return }
 
-// Finds tabs with similar urls across windows.
-// TODO: Add toggle option to limit closing of duplicate tabs
-// across windows, or only to the current one. 
-function findDuplicateTabs(tab, callback) {
-  chrome.windows.getCurrent({populate: true, windowTypes: ['normal']}, function(windw) {
-    var dups = [];
-    var targetDomain = getDomain(tab.url);
-    console.log("Original Tab: " + tab.id);
+            // Remove listener to avoid duplicate events.
+            chrome.tabs.onUpdated.removeListener(onTabUpdated);
+            console.log("URL: " + tab.url);
+            
+            // Filter whitelist
+            if(inWhitelist(tab.url)) { return }
 
-    // TODO: Assert window still contains our tab
-    for(var i = 0; i < windw.tabs.length; i++) {
-      var tmpTab = windw.tabs[i];
+            findDuplicateTabs(tab, function(dupTabs) {
+              handleDuplicateTabs(tab, dupTabs);
+            });
+          }
+        })
+    }
+  }
 
-      // GUARD: Skip our original tab
-      if(tmpTab.id == tab.id) { continue; }
+  //TODO: Error handling if dup tab could not be highlighted.
+  function handleDuplicateTabs(tab, duplicates) {
 
-      // Add tab to duplicates if domain is the same.
-      // TODO: Give the user an option to match by domain
-      // or more specificity (domain + path, etc...)
-      tmpDomain = getDomain(tmpTab.url);
-      if(tmpDomain == targetDomain) {
-        console.log("Duplicate Tab: " + tmpTab.id);
-        dups.push(tmpTab);
-      }
+    // GUARD: The current tab will be kept open if
+    // we can't find duplicate tabs
+    if(duplicates.length == 0) { return }
+
+    var dupWindow = duplicates[0].window;
+    var dupTab    = duplicates[0].tab;
+
+    chrome.tabs.highlight({
+      windowId: dupWindow.id,
+      tabs: dupTab.index
+    }, function() {
+      // Close our new tab
+      chrome.tabs.remove(tab.id)
+        console.log("Tab highlighted");
+    });
+
+    // Request focus of different window
+    if(dupWindow.id != tab.windowId) {
+      chrome.windows.update(dupWindow.id, { focused: true })
+    }
+  }
+
+  // Finds tabs with similar urls across windows.
+  function findDuplicateTabs(tab, callback) {
+
+    if(searchScope == "active") {
+      var func = chrome.windows.getCurrent;
+    } else if (searchScope == "all") {
+      var func = chrome.windows.getAll;
     }
 
-    callback(dups);
-  })
-}
+    func({populate: true, windowTypes: ['normal']}, function(windows) {
+      var dups = [];
+      var targetDomain = getDomain(tab.url);
+      console.log("Original Tab: " + tab.id);
 
-// http://stackoverflow.com/questions/12220345/how-to-compare-two-urls-in-javascript-or-jquery
-function getDomain(url) {
-  var prefix = /^https?:\/\//i;
-  var domain = /^[^\/]+/;
-  url = url.replace(prefix, "");
+      // Convert single Window into Window array
+      if(!(windows instanceof Array)) {
+        windows = [windows];
+      } 
 
-  var match = url.match(domain);
-  if (match) {
-    return(match[0]);
+      // TODO: Assert window still contains our tab
+      for(var i = 0; i < windows.length; i++) {
+        for(var j = 0; j < windows[i].tabs.length; j++) {
+          var tmpTab = windows[i].tabs[j];
+
+          // GUARD: Skip our original tab
+          if(tmpTab.id == tab.id) { continue; }
+
+          // Add tab to duplicates if domain is the same.
+          // TODO: Give the user an option to match by domain
+          // or more specificity (domain + path, etc...)
+          tmpDomain = getDomain(tmpTab.url);
+          if(tmpDomain == targetDomain) {
+            console.log("Duplicate Tab: " + tmpTab.id);
+            dups.push({
+              tab: tmpTab,
+              window: windows[i]
+            });
+          }
+        }
+      }
+
+      callback(dups);
+    })
   }
-  return(null);
-}
+
+  function inWhitelist(url) {
+    var protocol = getProtocol(url);
+
+    if(protocol == "chrome" ||
+       protocol == "chrome-extension") {
+      return true;
+    }
+
+    return false;
+  }
+
+  main();
+})();

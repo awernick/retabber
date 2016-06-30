@@ -2,7 +2,8 @@
   "manifest_version": 2,
   "name": "Retabber",
   "description": "Minimizes duplicate tabs",
-  "version": "0.1.2",
+  "version": "0.1.3",
+  "options_page": "options.html",
   "browser_action": {
     "default_action": "icon.png"
   },
@@ -12,6 +13,7 @@
   },
   "permissions": [
     "tabs",
+    "storage",
     "activeTab"
   ]
 }
