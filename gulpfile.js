@@ -3,11 +3,12 @@ var gulp  = require('gulp'),
     gutil = require('gulp-util');
 
 var fs = require('fs');
-var exec = require('child_process').exec;
+var execSync = require('sync-exec');
 var manifest = require('./src/manifest.json');
 
 var version = manifest.version;
 var pkgName = "retabber-" + version + ".crx";
+var pkgPath = "dist/" + pkgName; 
 
 gulp.task('default', ['watch']);
 
@@ -23,17 +24,13 @@ gulp.task('watch', function() {
 
 // Delete duplicate build
 gulp.task('delete-build', function() {
-  var pkgPath = "dist/" + pkgName; 
-
   fs.exists(pkgPath, function(exists) {
     if(exists) { fs.unlink(pkgPath, function() {}) }
   });
 })
 
 gulp.task('build', ['delete-build'], function() {
-  exec('./crxmake.sh retabber src dist/retabber.pem');
-
-  gulp.src('retabber.crx', { base: './' })
-    .pipe(gulp.dest("dist/retabber-" + version + ".crx"))
+  execSync('./crxmake.sh retabber src dist/retabber.pem');
+  fs.rename('./retabber.crx', pkgPath);
 });
 
