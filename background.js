@@ -8,14 +8,17 @@
       closeExisting = null,
       whitelist     = null;
 
-  prefStore.getAll(function(prefs) {
+
+  function setPreferences(prefs) {
     searchScope   = prefs.searchScope;
     closeNew      = prefs.closeNew;
     closeExisting = prefs.closeExisting;
     whitelist     = prefs.whitelist;
-  })
+  }
 
   function main() {
+    prefStore.getAll(setPreferences);
+
     chrome.tabs.onCreated.addListener(onTabCreated);
   }
 
